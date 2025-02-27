@@ -27,6 +27,11 @@ export const ColumnContainer = styled.div`
   padding: 20px;
   box-shadow: 0 2px 4px #0000001A;
   min-width: 280px;
+  &.dragging {
+    opacity: 0.5; /* Add visual feedback for dragging */
+  }
+  cursor: grab;
+  draggable: true;
 `;
 export const ColumnTitleBar = styled.div<ColumnTitleBarProps>`
   display: flex;

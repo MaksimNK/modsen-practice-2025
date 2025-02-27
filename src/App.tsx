@@ -1,12 +1,14 @@
+import { Route, Routes } from 'react-router';
 import './App.css';
 import { DashBoard } from './components/DashBoard/index';
-import ErrorBoundary from './components/ErrorBoundaries/ErrorBoundaries';
+import { NotFound } from './pages/NotFoundPage';
 
 function App() {
   return (
-    <ErrorBoundary>
-      <DashBoard />
-    </ErrorBoundary>
+    <Routes>
+      <Route path='/' element={<DashBoard />} />
+      <Route path='/*' element={<NotFound />} />
+    </Routes >
   )
 }
 
