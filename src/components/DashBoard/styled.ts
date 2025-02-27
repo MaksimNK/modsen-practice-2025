@@ -16,4 +16,9 @@ export const BoardContainer = styled.div`
     background-color: #fff;
     overflow-x: auto;
     box-sizing: border-box;
-`
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+    &::-webkit-scrollbar {
+      display: none;
+    }
+`;
