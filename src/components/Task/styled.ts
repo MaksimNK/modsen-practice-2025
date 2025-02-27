@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const TaskItem = styled.div`
+  position: relative;
   background-color: #fff;
   border-radius: 30px;
   padding: 15px;
@@ -52,4 +53,14 @@ export const TaskItemStyled = styled(TaskItem)`
     cursor: grabbing;
     border: 1px dashed #ccc;
   }
+`;
+
+export const MoreButtonStyled = styled.button`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
 `;
