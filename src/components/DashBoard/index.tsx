@@ -72,12 +72,10 @@ export const DashBoard: FC = () => {
     };
 
     const handleColumnDrop = (draggedColumnId: string, targetColumnId: string) => {
-        const draggedIndex = columns.findIndex((col: ColumnData) => col.id === draggedColumnId);
-        const targetIndex = columns.findIndex((col: ColumnData) => col.id === targetColumnId);
-        if (draggedIndex === -1 || targetIndex === -1) return;
-        const updatedColumns = [...columns];
-        const [draggedColumn] = updatedColumns.splice(draggedIndex, 1);
-        updatedColumns.splice(targetIndex, 0, draggedColumn);
+        dispatch({
+            type: "MOVE_COLUMN",
+            payload: { draggedColumnId, targetColumnId },
+        });
     };
 
     const [newCoumnTitle, setNewCoumnTitle] = useState<string>("");
