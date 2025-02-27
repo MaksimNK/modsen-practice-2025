@@ -1,62 +1,136 @@
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import { ITaskProps } from "../Task/index";
 import { Column } from "../Column/index";
 import { BoardContainer, PageContainer } from "./styled";
-
-interface TaskData extends ITaskProps {
-    column: string;
-}
-const initialTasks: TaskData[] = [
-    { id: '1', title: 'Task 1', description: 'Description for task 1', column: 'To Do', priority: 'medium' },
-    { id: '2', title: 'Task 2', description: 'Description for task 2', column: 'In Progress', priority: 'high' },
-    { id: '3', title: 'Task 3', description: 'Description for task 3', column: 'Done', priority: 'low' },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { ITaskPayload } from "../../store/actions/taskActions";
 
 interface ColumnData {
+    id: string;
     title: string;
     color: string;
 }
 
-const initialColumns: ColumnData[] = [
-    { title: 'To Do', color: '#4F46E5' },
-    { title: 'In Progress', color: '#F59E0B' },
-    { title: 'Done', color: '#22C55E' },
-];
-
-
 export const DashBoard: FC = () => {
-    const [tasks, setTasks] = useState<TaskData[]>(initialTasks);
     const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
-
+    const dispatch = useDispatch<any>();
+    const tasks = useSelector((state: RootState) => state.task);
+    const columns = useSelector((state: RootState) => state.column);
 
     const handleDropTask = (taskId: string, targetColumn: string) => {
-        setTasks((prevTasks) =>
-            prevTasks.map((task) =>
-                task.id === taskId ? { ...task, column: targetColumn } : task
-            )
-        );
+        dispatch({
+            type: "MOVE_TASK",
+            payload: { id: taskId, column: targetColumn },
+        });
+    };
+
+    const transformedTasks: ITaskProps[] = tasks.map((task) => ({
+        id: task.id,
+        title: task.title || "Untitled",
+        description: task.description,
+        priority: task.priority || "medium",
+        column: task.column,
+    }));
+
+    const handleTaskDelete = (id: string) => {
+        dispatch({
+            type: "DELETE_TASK",
+            payload: { id },
+        });
+    };
+
+    const handleUpdateTask = (
+        id: string,
+        updatedTask: { title: string; description?: string; priority: string }
+    ) => {
+        const taskPayload: ITaskPayload = {
+            id,
+            title: updatedTask.title,
+            description: updatedTask.description,
+            priority: updatedTask.priority,
+        };
+        dispatch({
+            type: "UPDATE_TASK",
+            payload: taskPayload,
+        });
     };
 
     const handleCreateTask = (newTask: ITaskProps, targetColumn: string) => {
-        setTasks([...tasks, { ...newTask, column: targetColumn }]);
+        const taskPayload: ITaskPayload = {
+            id: newTask.id,
+            title: newTask.title,
+            description: newTask.description,
+            priority: newTask.priority,
+            column: targetColumn,
+        };
+
+        dispatch({
+            type: "CREATE_TASK",
+            payload: taskPayload,
+        });
+    };
+
+    const handleColumnDrop = (draggedColumnId: string, targetColumnId: string) => {
+        const draggedIndex = columns.findIndex((col: ColumnData) => col.id === draggedColumnId);
+        const targetIndex = columns.findIndex((col: ColumnData) => col.id === targetColumnId);
+        if (draggedIndex === -1 || targetIndex === -1) return;
+        const updatedColumns = [...columns];
+        const [draggedColumn] = updatedColumns.splice(draggedIndex, 1);
+        updatedColumns.splice(targetIndex, 0, draggedColumn);
+    };
+
+    const [newCoumnTitle, setNewCoumnTitle] = useState<string>("");
+    const [newColumnColor, setNewColumnColor] = useState<string>("");
+
+    const handleAddColumn = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const uuid = self.crypto.randomUUID();
+        const newColumn: ColumnData = {
+            id: uuid,
+            title: newCoumnTitle,
+            color: newColumnColor,
+        };
+        dispatch({ type: "CREATE_COLUMN", payload: newColumn });
+        setNewCoumnTitle("");
+        setNewColumnColor("");
     };
 
     return (
         <PageContainer>
             <h1>Kanban Dashboard</h1>
             <BoardContainer>
-                {initialColumns.map((column) => (
+                {columns.map((column: ColumnData) => (
                     <Column
-                        key={column.title}
+                        key={column.id}
+                        id={column.id}
                         title={column.title}
                         titleBarColor={column.color}
-                        tasks={tasks.filter((task) => task.column === column.title)}
+                        tasks={transformedTasks.filter((task) => task.column === column.title)}
                         onDropTask={handleDropTask}
                         onCreateTask={handleCreateTask}
                         onTaskDragStart={setDraggingTaskId}
                         draggingTaskId={draggingTaskId}
+                        onTaskDelete={handleTaskDelete}
+                        onTaskUpdate={handleUpdateTask}
+                        onColumnDrop={handleColumnDrop}
                     />
                 ))}
+                <form onSubmit={handleAddColumn}>
+                    <input
+                        type="text"
+                        placeholder="New Column Title"
+                        value={newCoumnTitle}
+                        onChange={(e) => setNewCoumnTitle(e.target.value)}
+                    />
+                    <input
+                        type="color"
+                        placeholder="New Column Color"
+                        value={newColumnColor}
+                        onChange={(e) => setNewColumnColor(e.target.value)}
+                    />
+                    <button type="submit">+</button>
+                </form>
             </BoardContainer>
         </PageContainer>
     );

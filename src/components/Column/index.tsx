@@ -10,6 +10,7 @@ import {
 } from "./styled";
 
 export interface ColumnProps {
+    id: string;
     title: string;
     tasks: ITaskProps[];
     titleBarColor: string;
@@ -17,15 +18,22 @@ export interface ColumnProps {
     onCreateTask: (newTask: ITaskProps, targetColumn: string) => void;
     onTaskDragStart: (taskId: string | null) => void;
     draggingTaskId: string | null;
+    onTaskDelete?: (id: string) => void;
+    onTaskUpdate?: (id: string, updatedTask: { title: string; description?: string; priority: string }) => void;
+    onColumnDrop?: (draggedColumn: string, targetColumn: string) => void;
 }
 
 export const Column: FC<ColumnProps> = ({
+    id,
     title,
     tasks,
     titleBarColor,
     onDropTask,
     onCreateTask,
     onTaskDragStart,
+    onTaskDelete,
+    onTaskUpdate,
+    onColumnDrop
 }) => {
     const [isCreating, setIsCreating] = useState(false);
     const [newTitle, setNewTitle] = useState("");
@@ -63,7 +71,7 @@ export const Column: FC<ColumnProps> = ({
         setNewDescription("");
         setNewPriority("medium");
     }
-    
+
     const handleCreateTaskSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const uuid = self.crypto.randomUUID();
@@ -87,21 +95,50 @@ export const Column: FC<ColumnProps> = ({
         setNewPriority("medium");
     };
 
+    const handleColumnDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+        e.dataTransfer.setData("text/column", id);
+    };
+
+    const handleColumnDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const draggedColumnId = e.dataTransfer.getData("text/column");
+        if (draggedColumnId && onColumnDrop) {
+            onColumnDrop(draggedColumnId, id);
+        }
+    };
+
+
+
+
     return (
         <ColumnContainer
             className="column-container"
             data-column={title}
+            ref={columnRef}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            ref={columnRef}
         >
-            <ColumnTitleBar titleColor={titleBarColor}>
+            <ColumnTitleBar titleColor={titleBarColor}
+                draggable
+                onDragStart={handleColumnDragStart}
+                onDragOver={handleDragOver}
+                onDrop={(e) => {
+                    if (e.dataTransfer.types.includes("text/column")) {
+                        handleColumnDrop(e);
+                    } else {
+                        const taskId = e.dataTransfer.getData("text/plain");
+                        let insertIndex = tasks.length;
+                        onDropTask(taskId, title, insertIndex);
+                    }
+                }}
+
+            >
                 <ColumnTitle >{title}</ColumnTitle>
                 <AddButton onClick={handleCreateEmptyTask}>+</AddButton>
             </ColumnTitleBar>
             <TaskContainer>
                 {tasks.map((task) => (
-                    <Task key={task.id} {...task} onTaskDragStart={onTaskDragStart} />
+                    <Task key={task.id} {...task} onTaskDragStart={onTaskDragStart} onTaskDelete={onTaskDelete} onTaskUpdate={onTaskUpdate} />
                 ))}
                 {isCreating ? (
                     <form onSubmit={handleCreateTaskSubmit}>
