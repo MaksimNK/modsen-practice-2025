@@ -53,8 +53,7 @@ export const TaskItemStyled = styled(TaskItem)`
   &.dragging {
     box-shadow: ${(props) => props.theme.boxShadow.taskDragging};
     cursor: grabbing;
-    border: ${(props) => props.theme.border.taskDragging}
-      ${(props) => props.theme.colors.taskDraggingBorder};
+    border: ${(props) => props.theme.border.taskDragging} ${(props) => props.theme.colors.taskDraggingBorder};
     z-index: 100;
   }
 `;
