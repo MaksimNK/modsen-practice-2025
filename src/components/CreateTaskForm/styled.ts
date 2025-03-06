@@ -28,7 +28,6 @@ export const InputTitle = styled.input`
     color: ${(props) => props.theme.colors.taskTitle};
   }
 `;
-
 export const InputDescription = styled.input`
   font-size: ${(props) => props.theme.fontSizes.medium};
   color: ${(props) => props.theme.colors.taskDescription};
@@ -79,13 +78,6 @@ export const PrioritySelect = styled.select`
         return props.theme.colors.textSecondary;
     }
   }};
-`;
-
-export const CancelButton = styled.button`
-  background-color: ${(props) => props.theme.colors.priorityDefault};
-  &:hover {
-    background-color: ${(props) => props.theme.colors.priorityLow};
-  }
 `;
 
 export const SaveButton = styled.button`

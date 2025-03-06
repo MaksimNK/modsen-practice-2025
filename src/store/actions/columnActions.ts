@@ -1,4 +1,3 @@
-// src/store/actions/columnActions.ts
 import { Action } from 'redux';
 
 export interface IColumnPayload {
@@ -27,7 +26,4 @@ export type ColumnActionType =
   | CreateColumnAction
   | UpdateColumnAction
   | DeleteColumnAction
-  | MoveColumnAction
-  | { type: 'UNKNOWN_COLUMN_ACTION' };
-
-
+  | MoveColumnAction;

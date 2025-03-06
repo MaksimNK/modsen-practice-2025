@@ -6,6 +6,8 @@ import { Provider } from 'react-redux';
 import store from './store/index.ts';
 import { BrowserRouter } from 'react-router';
 import ErrorBoundary from './components/ErrorBoundaries/ErrorBoundaries.tsx';
+import { ThemeProvider } from 'styled-components';
+import { theme } from './constants/theme.ts';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -14,11 +16,13 @@ if (!rootElement) {
 createRoot(rootElement).render(
   <StrictMode>
     <ErrorBoundary>
-      <BrowserRouter>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Provider store={store}>
+            <App />
+          </Provider>
+        </BrowserRouter>
+      </ThemeProvider>
     </ErrorBoundary>
   </StrictMode>
 );

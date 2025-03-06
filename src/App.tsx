@@ -6,10 +6,10 @@ import { NotFound } from './pages/NotFoundPage';
 function App() {
   return (
     <Routes>
-      <Route path='/' element={<DashBoard />} />
-      <Route path='/*' element={<NotFound />} />
-    </Routes >
-  )
+      <Route path="/" element={<DashBoard />} />
+      <Route path="/*" element={<NotFound />} />
+    </Routes>
+  );
 }
 
 export default App;
