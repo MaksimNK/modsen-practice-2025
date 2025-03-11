@@ -8,7 +8,11 @@ export const BurgerMenuButton = styled.button`
   font-size: 1.5em;
   padding: 5px;
 
-  @media (max-width: ${(props) => props.theme.breakpoints.md}) {
+  @media (max-width: ${({
+      theme: {
+        breakpoints: { md },
+      },
+    }) => md}) {
     position: absolute;
     top: 0;
     left: 10;

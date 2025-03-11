@@ -1,24 +1,52 @@
 import styled from 'styled-components';
-import { lightedHex } from '../../utils/lightenHex';
+import { lightedHex } from '@utils/lightenHex';
 
 interface ColumnTitleBarProps {
   titleColor: string;
 }
 
+const COLUMN_GAP = 40;
+const COLUMN_COUNT = 3.5;
+
 export const AddTaskWrapper = styled.div<ColumnTitleBarProps>`
-  padding: ${(props) => props.theme.padding.addTaskWrapper};
+  padding: ${({
+    theme: {
+      padding: { addTaskWrapper },
+    },
+  }) => addTaskWrapper};
   cursor: pointer;
-  background-color: ${(props) => props.theme.colors.taskBackground};
-  border-radius: ${(props) => props.theme.borderRadius.addTaskWrapper};
+  background-color: ${({
+    theme: {
+      colors: { taskBackground },
+    },
+  }) => taskBackground};
+  border-radius: ${({
+    theme: {
+      borderRadius: { addTaskWrapper },
+    },
+  }) => addTaskWrapper};
   margin-bottom: 10px;
-  box-shadow: 0 1px 2px ${(props) => props.theme.colors.taskBoxShadow};
+  box-shadow: 0 1px 2px
+    ${({
+      theme: {
+        colors: { taskBoxShadow },
+      },
+    }) => taskBoxShadow};
 `;
 
 export const AddTask = styled.div<ColumnTitleBarProps>`
-  color: ${(props) => props.titleColor};
-  border-radius: ${(props) => props.theme.borderRadius.addTask};
-  background-color: ${(props) => lightedHex(props.titleColor, 0.9)};
-  padding: ${(props) => props.theme.padding.small};
+  color: ${({ titleColor }) => titleColor};
+  border-radius: ${({
+    theme: {
+      borderRadius: { addTask },
+    },
+  }) => addTask};
+  background-color: ${({ titleColor }) => lightedHex(titleColor, 0.9)};
+  padding: ${({
+    theme: {
+      padding: { small },
+    },
+  }) => small};
   width: fit-content;
 `;
 
@@ -30,11 +58,28 @@ export const TaskContainer = styled.div`
 `;
 
 export const ColumnContainer = styled.div`
-  flex: 0 0 calc((100% - 40px) / 3);
-  background-color: ${(props) => props.theme.colors.background};
-  border-radius: ${(props) => props.theme.borderRadius.medium};
-  padding: ${(props) => props.theme.padding.large};
-  box-shadow: 0 5px 5px ${(props) => props.theme.colors.taskBoxShadow};
+  flex: 0 0 calc((100% - ${COLUMN_GAP}px) / ${COLUMN_COUNT});
+  background-color: ${({
+    theme: {
+      colors: { background },
+    },
+  }) => background};
+  border-radius: ${({
+    theme: {
+      borderRadius: { medium },
+    },
+  }) => medium};
+  padding: ${({
+    theme: {
+      padding: { large },
+    },
+  }) => large};
+  box-shadow: 0 5px 5px
+    ${({
+      theme: {
+        colors: { taskBoxShadow },
+      },
+    }) => taskBoxShadow};
   margin: 0 10px;
   &.dragging {
     opacity: 0.5;
@@ -42,10 +87,18 @@ export const ColumnContainer = styled.div`
   height: fit-content;
   margin-top: 40px;
 
-  @media (max-width: ${(props) => props.theme.breakpoints.md}) {
+  @media (max-width: ${({
+      theme: {
+        breakpoints: { md },
+      },
+    }) => md}) {
     flex: 0 0 100%;
     margin: 10px 0;
-    background-color: ${(props) => props.theme.colors.mobileCoulmnBackground};
+    background-color: ${({
+      theme: {
+        colors: { mobileCoulmnBackground },
+      },
+    }) => mobileCoulmnBackground};
   }
 `;
 
@@ -53,18 +106,38 @@ export const ColumnTitleBar = styled.div<ColumnTitleBarProps>`
   position: relative;
   display: flex;
   justify-content: space-between;
-  background-color: ${(props) => props.titleColor};
-  border-radius: ${(props) => props.theme.borderRadius.medium};
-  padding: ${(props) => props.theme.padding.columnTitleBar};
+  background-color: ${({ titleColor }) => titleColor};
+  border-radius: ${({
+    theme: {
+      borderRadius: { medium },
+    },
+  }) => medium};
+  padding: ${({
+    theme: {
+      padding: { columnTitleBar },
+    },
+  }) => columnTitleBar};
   align-items: center;
   margin-bottom: 20px;
   cursor: grab;
 `;
 
 export const ColumnTitle = styled.h2`
-  font-size: ${(props) => props.theme.fontSizes.large};
-  font-weight: ${(props) => props.theme.fontWeights.semiBold};
-  color: ${(props) => props.theme.colors.textSecondary};
+  font-size: ${({
+    theme: {
+      fontSizes: { large },
+    },
+  }) => large};
+  font-weight: ${({
+    theme: {
+      fontWeights: { semiBold },
+    },
+  }) => semiBold};
+  color: ${({
+    theme: {
+      colors: { textSecondary },
+    },
+  }) => textSecondary};
   margin: 0;
 `;
 
@@ -77,30 +150,63 @@ export const ActionButtonsContainer = styled.div`
 export const AddButton = styled.button`
   background-color: transparent;
   border: none;
-  color: ${(props) => props.theme.colors.textSecondary};
+  color: ${({
+    theme: {
+      colors: { textSecondary },
+    },
+  }) => textSecondary};
   cursor: pointer;
-  font-size: ${(props) => props.theme.fontSizes.xl};
-  padding: ${(props) => props.theme.padding.addButton};
-  border-radius: ${(props) => props.theme.borderRadius.small};
+  font-size: ${({
+    theme: {
+      fontSizes: { large },
+    },
+  }) => large};
+  padding: ${({
+    theme: {
+      padding: { addButton },
+    },
+  }) => addButton};
+  border-radius: ${({
+    theme: {
+      borderRadius: { small },
+    },
+  }) => small};
 `;
 
 export const MoreIconWrapper = styled.div`
   cursor: pointer;
-  color: ${(props) => props.theme.colors.textSecondary};
+  color: ${({
+    theme: {
+      colors: { textSecondary },
+    },
+  }) => textSecondary};
 `;
 
 export const CountCircle = styled.span<ColumnTitleBarProps>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: ${(props) => props.theme.colors.textSecondary};
-  color: ${(props) => lightedHex(props.titleColor, 0.5)};
+  background-color: ${({
+    theme: {
+      colors: { textSecondary },
+    },
+  }) => textSecondary};
+  color: ${({ titleColor }) => lightedHex(titleColor, 0.5)};
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  font-size: ${(props) => props.theme.fontSizes.small};
+  font-size: ${({
+    theme: {
+      fontSizes: { small },
+    },
+  }) => small};
   margin-left: 8px;
-  border: 1px solid ${(props) => props.theme.colors.taskBorder};
+  border: 1px solid
+    ${({
+      theme: {
+        colors: { taskBorder },
+      },
+    }) => taskBorder};
 `;
 
 export const HeaderContainer = styled.div`

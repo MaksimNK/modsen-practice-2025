@@ -1,5 +1,4 @@
 import { FC, useState, useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import {
   Form,
   TextInput,
@@ -7,22 +6,17 @@ import {
   SubmitButton,
   ErrorMessage,
 } from './styled';
-import { AppDispatch } from '../../store';
-interface ColumnData {
-  id: string;
-  title: string;
-  color: string;
-}
+import { useReduxActions } from '@hooks/useReduxActions';
 
 interface ColumnFormProps {
   onClose: () => void;
 }
 
 export const ColumnForm: FC<ColumnFormProps> = ({ onClose }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const { createColumn } = useReduxActions();
   const menuRef = useRef<HTMLFormElement | null>(null);
 
-  const [newCoumnTitle, setNewCoumnTitle] = useState<string>('');
+  const [newColumnTitle, setNewColumnTitle] = useState<string>('');
   const [newColumnColor, setNewColumnColor] = useState<string>('#000000');
   const [error, setError] = useState<string>('');
 
@@ -49,15 +43,15 @@ export const ColumnForm: FC<ColumnFormProps> = ({ onClose }) => {
   }, [onClose]);
 
   const validateForm = () => {
-    if (!newCoumnTitle.trim()) {
+    if (!newColumnTitle.trim()) {
       setError('Column title is required.');
       return false;
     }
-    if (newCoumnTitle.trim().length < 3) {
+    if (newColumnTitle.trim().length < 3) {
       setError('Column title must be at least 3 characters long.');
       return false;
     }
-    if (newCoumnTitle.trim().length > 30) {
+    if (newColumnTitle.trim().length > 30) {
       setError('Column title must be less than 30 characters long.');
       return false;
     }
@@ -69,14 +63,13 @@ export const ColumnForm: FC<ColumnFormProps> = ({ onClose }) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    const uuid = self.crypto.randomUUID();
-    const newColumn: ColumnData = {
-      id: uuid,
-      title: newCoumnTitle,
+    createColumn({
+      id: self.crypto.randomUUID(),
+      title: newColumnTitle,
       color: newColumnColor,
-    };
-    dispatch({ type: 'CREATE_COLUMN', payload: newColumn });
-    setNewCoumnTitle('');
+    });
+
+    setNewColumnTitle('');
     setNewColumnColor('#000000');
     onClose();
   };
@@ -85,8 +78,8 @@ export const ColumnForm: FC<ColumnFormProps> = ({ onClose }) => {
     <Form onSubmit={handleAddColumn} ref={menuRef}>
       <TextInput
         placeholder="New Column Title"
-        value={newCoumnTitle}
-        onChange={(e) => setNewCoumnTitle(e.target.value)}
+        value={newColumnTitle}
+        onChange={(e) => setNewColumnTitle(e.target.value)}
       />
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <ColorInput

@@ -1,4 +1,7 @@
 import { FC, useState, useRef, useEffect } from 'react';
+import { TaskType } from '@myTypes/task';
+import { useToast } from '@hooks/useToast'; // Импорт useToast
+
 import {
   Form,
   InputTitle,
@@ -8,35 +11,37 @@ import {
   SaveButton,
   ButtonGroup,
 } from './styled';
-import { TaskType } from '../../constants/constant';
 
-interface ICreateTaskFormProps {
-  onCreateTask: (newTask: TaskType, targetColumn: string) => void;
-  columnTitle: string;
-  setIsCreating: (IsCreating: boolean) => void;
+interface TaskEditFormProps {
+  task: TaskType;
+  onSave: (updatedTask: TaskType) => void;
+  setIsEditing: (isEditing: boolean) => void;
 }
 
-export const CreateTaskForm: FC<ICreateTaskFormProps> = ({
-  onCreateTask,
-  columnTitle,
-  setIsCreating,
+export const TaskEditForm: FC<TaskEditFormProps> = ({
+  task,
+  onSave,
+  setIsEditing,
 }) => {
-  const [newTitle, setNewTitle] = useState<string>('');
-  const [newDescription, setNewDescription] = useState<string>('');
-  const [newPriority, setNewPriority] = useState<string>('medium');
+  const [editedTitle, setEditedTitle] = useState<string>(task.title);
+  const [editedDescription, setEditedDescription] = useState<string>(
+    task.description || ''
+  );
+  const [editedPriority, setEditedPriority] = useState<string>(task.priority);
   const [validationError, setValidationError] = useState<string>('');
   const formRef = useRef<HTMLFormElement>(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (formRef.current && !formRef.current.contains(event.target as Node)) {
-        setIsCreating(false); // Close the form
+        setIsEditing(false);
       }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setIsCreating(false); // Close the form
+        setIsEditing(false);
       }
     };
 
@@ -47,18 +52,18 @@ export const CreateTaskForm: FC<ICreateTaskFormProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [setIsCreating]);
+  }, [setIsEditing]);
 
   const validateForm = (): boolean => {
-    if (newTitle.trim().length > 40) {
+    if (editedTitle.trim().length > 40) {
       setValidationError('Task Title must not exceed 40 characters.');
       return false;
     }
-    if (newDescription.trim().length > 50) {
+    if (editedDescription.trim().length > 50) {
       setValidationError('Task description must not exceed 50 characters.');
       return false;
     }
-    if (!['low', 'medium', 'high'].includes(newPriority)) {
+    if (!['low', 'medium', 'high'].includes(editedPriority)) {
       setValidationError('Invalid priority selected.');
       return false;
     }
@@ -66,28 +71,25 @@ export const CreateTaskForm: FC<ICreateTaskFormProps> = ({
     return true;
   };
 
-  const handleCreateTaskSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateForm()) return;
-    const uuid = self.crypto.randomUUID();
-    const newTask = {
-      id: uuid,
-      title: newTitle,
-      description: newDescription,
-      priority: newPriority,
-    };
-    onCreateTask(newTask, columnTitle);
-    setNewTitle('');
-    setNewDescription('');
-    setNewPriority('medium');
-    setIsCreating(false);
+
+    onSave({
+      id: task.id,
+      title: editedTitle,
+      description: editedDescription,
+      priority: editedPriority,
+    });
+    setIsEditing(false);
+    showToast('Task updated successfully!', 'success');
   };
 
   return (
-    <Form onSubmit={handleCreateTaskSubmit} ref={formRef}>
+    <Form onSubmit={handleSaveSubmit} ref={formRef}>
       <PrioritySelect
-        value={newPriority}
-        onChange={(e) => setNewPriority(e.target.value)}
+        value={editedPriority}
+        onChange={(e) => setEditedPriority(e.target.value)}
       >
         <option value="low">low</option>
         <option value="medium">medium</option>
@@ -96,19 +98,19 @@ export const CreateTaskForm: FC<ICreateTaskFormProps> = ({
       <InputTitle
         type="text"
         placeholder="Task title"
-        value={newTitle}
-        onChange={(e) => setNewTitle(e.target.value)}
+        value={editedTitle}
+        onChange={(e) => setEditedTitle(e.target.value)}
         required
       />
       <InputDescription
         type="text"
         placeholder="Add description"
-        value={newDescription}
-        onChange={(e) => setNewDescription(e.target.value)}
+        value={editedDescription}
+        onChange={(e) => setEditedDescription(e.target.value)}
       />
       {validationError && <ErrorMessage>{validationError}</ErrorMessage>}
       <ButtonGroup>
-        <SaveButton>Save</SaveButton>
+        <SaveButton type="submit">Save</SaveButton>
       </ButtonGroup>
     </Form>
   );

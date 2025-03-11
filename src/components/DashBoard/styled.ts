@@ -1,17 +1,35 @@
 import styled from 'styled-components';
 
+const PLUS_BUTTON_SIZE = '40px';
+
 export const PageContainer = styled.div`
-  font-family: ${(props) => props.theme.fontFamily.primary};
+  font-family: ${({
+    theme: {
+      fontFamily: { primary },
+    },
+  }) => primary};
   display: flex;
   flex-direction: column;
-  background-color: ${(props) => props.theme.colors.background};
+  background-color: ${({
+    theme: {
+      colors: { background },
+    },
+  }) => background};
   min-height: 100%;
 `;
 
 export const BoardContainer = styled.div`
   display: flex;
-  gap: ${(props) => props.theme.padding.medium};
-  background-color: ${(props) => props.theme.colors.backgroundBoard};
+  gap: ${({
+    theme: {
+      spacing: { medium },
+    },
+  }) => medium};
+  background-color: ${({
+    theme: {
+      colors: { backgroundBoard },
+    },
+  }) => backgroundBoard};
   overflow-x: auto;
   width: 100%;
   box-sizing: border-box;
@@ -21,9 +39,18 @@ export const BoardContainer = styled.div`
     display: none;
   }
 
-  @media (max-width: ${(props) => props.theme.breakpoints.md}) {
+  @media (max-width: ${({
+      theme: {
+        breakpoints: { md },
+      },
+    }) => md}) {
     flex-direction: column;
-    margin: 10px 0;
+    margin: ${({
+        theme: {
+          spacing: { small },
+        },
+      }) => small}
+      0;
   }
 `;
 
@@ -34,20 +61,37 @@ export const PlusButton = styled.button`
   align-items: center;
   justify-content: center;
   background-color: transparent;
-  color: #475569;
-  width: 40px;
-  height: 40px;
-  border: 1px solid #475569;
+  color: ${({
+    theme: {
+      colors: { plusButtonBorder },
+    },
+  }) => plusButtonBorder};
+  width: ${PLUS_BUTTON_SIZE};
+  height: ${PLUS_BUTTON_SIZE};
+  border: 1px solid
+    ${({
+      theme: {
+        colors: { plusButtonBorder },
+      },
+    }) => plusButtonBorder};
   border-radius: 50%;
   cursor: pointer;
   user-select: none;
-  font-size: 24px;
+  font-size: ${({
+    theme: {
+      fontSizes: { large },
+    },
+  }) => large};
   line-height: 1;
   font-weight: bold;
   padding: 0;
 
   &:hover {
-    color: #3e4a57;
+    color: ${({
+      theme: {
+        colors: { plusButtonHover },
+      },
+    }) => plusButtonHover};
   }
 
   &:focus {
@@ -56,30 +100,58 @@ export const PlusButton = styled.button`
 `;
 
 export const Header = styled.div`
-  margin: 40px;
+  margin: ${({
+    theme: {
+      spacing: { columnMarginTop },
+    },
+  }) => columnMarginTop};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 
-  @media (max-width: ${(props) => props.theme.breakpoints.md}) {
+  @media (max-width: ${({
+      theme: {
+        breakpoints: { md },
+      },
+    }) => md}) {
     display: none;
   }
 `;
 
 export const MobileHeader = styled.div`
   display: none;
-  @media (max-width: ${(props) => props.theme.breakpoints.md}) {
+  @media (max-width: ${({
+      theme: {
+        breakpoints: { md },
+      },
+    }) => md}) {
     display: block;
     width: 100%;
     height: 50px;
-    background-color: #fff;
-    padding: 10px;
+    background-color: ${({
+      theme: {
+        colors: { backgroundBoard },
+      },
+    }) => backgroundBoard};
+    padding: ${({
+      theme: {
+        spacing: { small },
+      },
+    }) => small};
   }
 `;
 
 export const MobileMenuButton = styled.button`
-  color: #475569;
+  color: ${({
+    theme: {
+      colors: { plusButtonBorder },
+    },
+  }) => plusButtonBorder};
   background-color: transparent;
   border: none;
-  font-size: ${(props) => props.theme.fontSizes.taskTitle};
+  font-size: ${({
+    theme: {
+      fontSizes: { taskTitle },
+    },
+  }) => taskTitle};
 `;

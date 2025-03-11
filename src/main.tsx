@@ -7,7 +7,8 @@ import store from './store/index.ts';
 import { BrowserRouter } from 'react-router';
 import ErrorBoundary from './components/ErrorBoundaries/ErrorBoundaries.tsx';
 import { ThemeProvider } from 'styled-components';
-import { theme } from './constants/theme.ts';
+import { theme } from './theme/theme.ts';
+import { ToastProvider } from './providers/ToastProvider.tsx';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -17,11 +18,13 @@ createRoot(rootElement).render(
   <StrictMode>
     <ErrorBoundary>
       <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <Provider store={store}>
-            <App />
-          </Provider>
-        </BrowserRouter>
+        <ToastProvider>
+          <BrowserRouter>
+            <Provider store={store}>
+              <App />
+            </Provider>
+          </BrowserRouter>
+        </ToastProvider>
       </ThemeProvider>
     </ErrorBoundary>
   </StrictMode>

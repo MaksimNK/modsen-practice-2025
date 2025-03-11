@@ -1,6 +1,4 @@
 import { FC, useState, useRef, useEffect } from 'react';
-import { TaskType } from '../../constants/constant';
-
 import {
   Form,
   InputTitle,
@@ -10,36 +8,35 @@ import {
   SaveButton,
   ButtonGroup,
 } from './styled';
+import { TaskType } from '@myTypes/task';
 
-interface TaskEditFormProps {
-  task: TaskType;
-  onSave: (updatedTask: TaskType) => void;
-  setIsEditing: (isEditing: boolean) => void;
+interface ICreateTaskFormProps {
+  onCreateTask: (newTask: TaskType, targetColumn: string) => void;
+  columnTitle: string;
+  setIsCreating: (IsCreating: boolean) => void;
 }
 
-export const TaskEditForm: FC<TaskEditFormProps> = ({
-  task,
-  onSave,
-  setIsEditing,
+export const CreateTaskForm: FC<ICreateTaskFormProps> = ({
+  onCreateTask,
+  columnTitle,
+  setIsCreating,
 }) => {
-  const [editedTitle, setEditedTitle] = useState<string>(task.title);
-  const [editedDescription, setEditedDescription] = useState<string>(
-    task.description || ''
-  );
-  const [editedPriority, setEditedPriority] = useState<string>(task.priority);
+  const [newTitle, setNewTitle] = useState<string>('');
+  const [newDescription, setNewDescription] = useState<string>('');
+  const [newPriority, setNewPriority] = useState<string>('medium');
   const [validationError, setValidationError] = useState<string>('');
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (formRef.current && !formRef.current.contains(event.target as Node)) {
-        setIsEditing(false);
+        setIsCreating(false);
       }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setIsEditing(false);
+        setIsCreating(false);
       }
     };
 
@@ -50,18 +47,18 @@ export const TaskEditForm: FC<TaskEditFormProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [setIsEditing]);
+  }, [setIsCreating]);
 
   const validateForm = (): boolean => {
-    if (editedTitle.trim().length > 40) {
+    if (newTitle.trim().length > 40) {
       setValidationError('Task Title must not exceed 40 characters.');
       return false;
     }
-    if (editedDescription.trim().length > 50) {
+    if (newDescription.trim().length > 50) {
       setValidationError('Task description must not exceed 50 characters.');
       return false;
     }
-    if (!['low', 'medium', 'high'].includes(editedPriority)) {
+    if (!['low', 'medium', 'high'].includes(newPriority)) {
       setValidationError('Invalid priority selected.');
       return false;
     }
@@ -69,24 +66,28 @@ export const TaskEditForm: FC<TaskEditFormProps> = ({
     return true;
   };
 
-  const handleSaveSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateTaskSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateForm()) return;
-
-    onSave({
-      id: task.id,
-      title: editedTitle,
-      description: editedDescription,
-      priority: editedPriority,
-    });
-    setIsEditing(false);
+    const uuid = self.crypto.randomUUID();
+    const newTask = {
+      id: uuid,
+      title: newTitle,
+      description: newDescription,
+      priority: newPriority,
+    };
+    onCreateTask(newTask, columnTitle);
+    setNewTitle('');
+    setNewDescription('');
+    setNewPriority('medium');
+    setIsCreating(false);
   };
 
   return (
-    <Form onSubmit={handleSaveSubmit} ref={formRef}>
+    <Form onSubmit={handleCreateTaskSubmit} ref={formRef}>
       <PrioritySelect
-        value={editedPriority}
-        onChange={(e) => setEditedPriority(e.target.value)}
+        value={newPriority}
+        onChange={(e) => setNewPriority(e.target.value)}
       >
         <option value="low">low</option>
         <option value="medium">medium</option>
@@ -95,19 +96,19 @@ export const TaskEditForm: FC<TaskEditFormProps> = ({
       <InputTitle
         type="text"
         placeholder="Task title"
-        value={editedTitle}
-        onChange={(e) => setEditedTitle(e.target.value)}
+        value={newTitle}
+        onChange={(e) => setNewTitle(e.target.value)}
         required
       />
       <InputDescription
         type="text"
         placeholder="Add description"
-        value={editedDescription}
-        onChange={(e) => setEditedDescription(e.target.value)}
+        value={newDescription}
+        onChange={(e) => setNewDescription(e.target.value)}
       />
       {validationError && <ErrorMessage>{validationError}</ErrorMessage>}
       <ButtonGroup>
-        <SaveButton type="submit">Save</SaveButton>
+        <SaveButton>Save</SaveButton>
       </ButtonGroup>
     </Form>
   );

@@ -2,58 +2,155 @@ import styled from 'styled-components';
 
 export const TaskItem = styled.div`
   position: relative;
-  background-color: ${(props) => props.theme.colors.taskBackground};
-  border-radius: ${(props) => props.theme.borderRadius.taskItem};
-  padding: ${(props) => props.theme.padding.taskItem};
+  background-color: ${({
+    theme: {
+      colors: { taskBackground },
+    },
+  }) => taskBackground};
+  border-radius: ${({
+    theme: {
+      borderRadius: { taskItem },
+    },
+  }) => taskItem};
+  padding: ${({
+    theme: {
+      padding: { taskItem },
+    },
+  }) => taskItem};
   margin-bottom: 10px;
-  box-shadow: ${(props) => props.theme.boxShadow.taskItem};
+  box-shadow: ${({
+    theme: {
+      boxShadow: { taskItem },
+    },
+  }) => taskItem};
   cursor: grab;
-  border: 1px solid ${(props) => props.theme.colors.taskBorder};
+  border: 1px solid
+    ${({
+      theme: {
+        colors: { taskBorder },
+      },
+    }) => taskBorder};
   height: fit-content;
 `;
 
 export const TaskTitle = styled.h3`
-  font-size: ${(props) => props.theme.fontSizes.taskTitle};
-  font-weight: ${(props) => props.theme.fontWeights.medium};
-  color: ${(props) => props.theme.colors.taskTitle};
+  font-size: ${({
+    theme: {
+      fontSizes: { taskTitle },
+    },
+  }) => taskTitle};
+  font-weight: ${({
+    theme: {
+      fontWeights: { medium },
+    },
+  }) => medium};
+  color: ${({
+    theme: {
+      colors: { taskTitle },
+    },
+  }) => taskTitle};
   margin: 0 0 5px 0;
 `;
 
 export const TaskDescription = styled.p`
-  font-size: ${(props) => props.theme.fontSizes.medium};
-  color: ${(props) => props.theme.colors.taskDescription};
+  font-size: ${({
+    theme: {
+      fontSizes: { medium },
+    },
+  }) => medium};
+  color: ${({
+    theme: {
+      colors: { taskDescription },
+    },
+  }) => taskDescription};
   margin: 0;
 `;
+
 export const TaskPriority = styled.span`
-  font-size: ${(props) => props.theme.fontSizes.small};
-  color: ${(props) => props.theme.colors.textSecondary};
-  background-color: ${(props) => props.theme.colors.priorityDefault};
-  padding: ${(props) => props.theme.padding.small};
-  border-radius: ${(props) => props.theme.borderRadius.priority};
+  font-size: ${({
+    theme: {
+      fontSizes: { small },
+    },
+  }) => small};
+  color: ${({
+    theme: {
+      colors: { textSecondary },
+    },
+  }) => textSecondary};
+  background-color: ${({
+    theme: {
+      colors: { priorityDefault },
+    },
+  }) => priorityDefault};
+  padding: ${({
+    theme: {
+      padding: { small },
+    },
+  }) => small};
+  border-radius: ${({
+    theme: {
+      borderRadius: { priority },
+    },
+  }) => priority};
   margin-top: 5px;
   display: inline-block;
 
   &.high {
-    background-color: ${(props) => props.theme.colors.priorityHigh};
-    color: ${(props) => props.theme.colors.priorityHighText};
+    background-color: ${({
+      theme: {
+        colors: { priorityHigh },
+      },
+    }) => priorityHigh};
+    color: ${({
+      theme: {
+        colors: { priorityHighText },
+      },
+    }) => priorityHighText};
   }
 
   &.medium {
-    background-color: ${(props) => props.theme.colors.priorityMediumBackground};
-    color: ${(props) => props.theme.colors.priorityMediumText};
+    background-color: ${({
+      theme: {
+        colors: { priorityMediumBackground },
+      },
+    }) => priorityMediumBackground};
+    color: ${({
+      theme: {
+        colors: { priorityMediumText },
+      },
+    }) => priorityMediumText};
   }
 
   &.low {
-    background-color: ${(props) => props.theme.colors.priorityLow};
-    color: ${(props) => props.theme.colors.priorityLowText};
+    background-color: ${({
+      theme: {
+        colors: { priorityLow },
+      },
+    }) => priorityLow};
+    color: ${({
+      theme: {
+        colors: { priorityLowText },
+      },
+    }) => priorityLowText};
   }
 `;
 
 export const TaskItemStyled = styled(TaskItem)`
   &.dragging {
-    box-shadow: ${(props) => props.theme.boxShadow.taskDragging};
+    box-shadow: ${({
+      theme: {
+        boxShadow: { taskDragging },
+      },
+    }) => taskDragging};
     cursor: grabbing;
-    border: ${(props) => props.theme.border.taskDragging} ${(props) => props.theme.colors.taskDraggingBorder};
+    border: ${({
+      theme: {
+        border: { taskDragging },
+      },
+      theme: {
+        colors: { taskDraggingBorder },
+      },
+    }) => `${taskDragging} ${taskDraggingBorder}`};
     z-index: 100;
   }
 `;
@@ -66,5 +163,9 @@ export const MoreButtonStyled = styled.div`
   border: none;
   cursor: pointer;
   padding: 0;
-  color: ${(props) => props.theme.colors.textPrimary};
+  color: ${({
+    theme: {
+      colors: { textPrimary },
+    },
+  }) => textPrimary};
 `;

@@ -25,13 +25,23 @@ export const theme = {
     editMenuItem: '#333',
     editMenuItemHover: '#f0f0f0',
     editMenuShadow: '#0000001a',
+    modalOverlayBackground: '#00000080',
+    formBackground: '#f9f9f9',
+    toastSuccessText: 'hsl(var(--toast-success-hue) 97% 3%)',
+    toastSuccessBackground: 'hsl(var(--toast-success-hue) 98% 99%)',
+    toastFailureText: 'hsl(var(--toast-failure-hue) 97% 3%)',
+    toastFailureBackground: 'hsl(var(--toast-failure-hue) 98% 99%)',
+    toastWarningText: 'hsl(var(--toast-warning-hue) 97% 3%)',
+    toastWarningBackground: 'hsl(var(--toast-warning-hue) 98% 99%)',
+    toastDefaultBackground: 'wheat',
+    plusButtonBorder: '#475569',
+    plusButtonHover: '#3e4a57',
   },
   fontSizes: {
-    small: '0.8rem',
-    medium: '0.9rem',
+    small: '0.9rem',
+    medium: '1rem',
     large: '1.2rem',
-    xl: '24px',
-    taskTitle: '1rem',
+    error: '0.9rem',
   },
   padding: {
     small: '3px 6px',
@@ -76,5 +86,20 @@ export const theme = {
   },
   zIndex: {
     editMenu: 10,
+  },
+  spacing: {
+    tiny: '0.25rem',
+    small: '0.5rem',
+    medium: '1rem',
+    large: '1.2rem',
+    negativeSmall: '-0.5rem',
+    columnMarginTop: '40px',
+  },
+  radii: {
+    tiny: '4px',
+    small: '8px',
+  },
+  sizes: {
+    colorInputSize: '50px',
   },
 };

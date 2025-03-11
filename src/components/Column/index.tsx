@@ -1,7 +1,6 @@
 import { FC, useRef, useState } from 'react';
-import { Task } from '../Task/index';
-import { TaskType } from '../../constants/constant';
-
+import { Task } from '@components/Task';
+import { TaskType } from '@myTypes/task';
 import {
   TaskContainer,
   AddTask,
@@ -15,12 +14,13 @@ import {
   CountCircle,
   HeaderContainer,
 } from './styled';
-import { MoreIcon } from '../UI/MoreIcon';
-import { CreateTaskForm } from '../CreateTaskForm';
-import { EditMenu } from '../EditMenu';
-import { ColumnEditForm } from '../ColumnEditForm';
+import { MoreIcon } from '@components/UI/MoreIcon';
+import { CreateTaskForm } from '@components/Forms/CreateTaskForm';
+import { EditMenu } from '@components/UI/EditMenu';
+import { ColumnEditForm } from '@components/Forms/ColumnEditForm';
+import { useDragAndDrop } from '@hooks/useDragAndDrop';
 
-export interface ColumnProps {
+interface ColumnProps {
   id: string;
   title: string;
   tasks: TaskType[];
@@ -62,33 +62,39 @@ export const Column: FC<ColumnProps> = ({
 }) => {
   const taskCount = tasks.length;
   const [isCreating, setIsCreating] = useState(false);
-
   const [isMoreHidden, setIsMoreHidden] = useState(true);
-
+  const [isEditMenuOpen, setIsEditMenuOpen] = useState(false);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const columnRef = useRef<HTMLDivElement>(null);
 
-  const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
-  const [isEditFormOpen, setIsEditFormOpen] = useState<boolean>(false);
+  const {
+    handleDragOver: handleColumnDragOver,
+    handleDrop: handleColumnDropFromHook,
+  } = useDragAndDrop({
+    dragType: 'text/column',
+    onDrop: (draggedColumnId) => {
+      if (draggedColumnId && onColumnDrop) {
+        onColumnDrop(draggedColumnId, id);
+      }
+    },
+  });
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleLocalDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleLocalDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const taskId = e.dataTransfer.getData('text/plain');
-    const insertIndex = tasks.length;
-    onDropTask(taskId, title, insertIndex);
+    const newIndex = tasks.length;
+
+    onDropTask(taskId, title, newIndex);
   };
 
-  const handleCreateTaskClick = () => {
-    setIsCreating(true);
-  };
-
+  const handleCreateTaskClick = () => setIsCreating(true);
   const handleCreateEmptyTask = () => {
     const uuid = self.crypto.randomUUID();
-
-    const newTask = {
+    const newTask: TaskType = {
       id: uuid,
       title: 'New Task',
       description: 'Description',
@@ -101,50 +107,26 @@ export const Column: FC<ColumnProps> = ({
     e.dataTransfer.setData('text/column', id);
   };
 
-  const handleColumnDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const draggedColumnId = e.dataTransfer.getData('text/column');
-    if (draggedColumnId && onColumnDrop) {
-      onColumnDrop(draggedColumnId, id);
-    }
-  };
-
-  const handleMouseEnter = () => {
-    setIsMoreHidden(false);
-  };
-  const handleMouseLeave = () => {
-    setIsMoreHidden(true);
-  };
-  const handleMoreButtonClick = () => {
-    setIsEditMenuOpen((prevState) => {
-      return !prevState;
-    });
-  };
-
-  const handleEditMenuClose = () => {
-    setIsEditMenuOpen(false);
-  };
-
+  const handleMouseEnter = () => setIsMoreHidden(false);
+  const handleMouseLeave = () => setIsMoreHidden(true);
+  const toggleEditMenu = () => setIsEditMenuOpen((prev) => !prev);
+  const closeEditMenu = () => setIsEditMenuOpen(false);
   const handleEditColumn = () => {
-    setIsEditMenuOpen(false);
+    closeEditMenu();
     setIsEditFormOpen(true);
   };
-
   const handleEditFormSave = (updateColumn: {
     title: string;
     color: string;
   }) => {
-    if (onColumnUpdate) {
-      onColumnUpdate(id, updateColumn);
-    }
+    if (onColumnUpdate) onColumnUpdate(id, updateColumn);
     setIsEditFormOpen(false);
   };
 
   const handleDeleteColumn = () => {
-    if (onColumnDelete) {
-      onColumnDelete(id);
-    }
+    if (onColumnDelete) onColumnDelete(id);
   };
+
   return (
     <ColumnContainer
       draggable
@@ -152,18 +134,18 @@ export const Column: FC<ColumnProps> = ({
       data-column={title}
       ref={columnRef}
       onDragStart={handleColumnDragStart}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      onDragOver={handleLocalDragOver}
+      onDrop={handleLocalDrop}
     >
       <ColumnTitleBar
         titleColor={titleBarColor}
         onDrop={(e) => {
           if (e.dataTransfer.types.includes('text/column')) {
-            handleColumnDrop(e);
+            handleColumnDragOver(e);
+            handleColumnDropFromHook(e);
           } else {
             const taskId = e.dataTransfer.getData('text/plain');
-            const insertIndex = tasks.length;
-            onDropTask(taskId, title, insertIndex);
+            onDropTask(taskId, title, tasks.length);
           }
         }}
         onMouseEnter={handleMouseEnter}
@@ -177,18 +159,16 @@ export const Column: FC<ColumnProps> = ({
         <ActionButtonsContainer>
           {!isMoreHidden && (
             <MoreIconWrapper>
-              <MoreIcon onMoreClick={handleMoreButtonClick} />
+              <MoreIcon onMoreClick={toggleEditMenu} />
             </MoreIconWrapper>
           )}
-
           {isEditMenuOpen && (
             <EditMenu
               onDelete={handleDeleteColumn}
-              onClose={handleEditMenuClose}
+              onClose={closeEditMenu}
               onEdit={handleEditColumn}
             />
           )}
-
           {isEditFormOpen && (
             <ColumnEditForm
               title={title}
@@ -199,6 +179,7 @@ export const Column: FC<ColumnProps> = ({
           <AddButton onClick={handleCreateEmptyTask}>+</AddButton>
         </ActionButtonsContainer>
       </ColumnTitleBar>
+
       <TaskContainer>
         {tasks.map((task) => (
           <Task
