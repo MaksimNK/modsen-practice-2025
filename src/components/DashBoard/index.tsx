@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Column } from '../Column/index';
+import { Column } from '@components/Column/index';
 import {
   BoardContainer,
   PageContainer,
@@ -8,14 +8,14 @@ import {
   MobileHeader,
   MobileMenuButton,
 } from './styled';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store';
-import { ITaskPayload } from '../../store/actions/taskActions';
-import { Modal } from '../Modal';
-import { ColumnForm } from '../ColumnForm';
-import { BurgerMenu } from '../UI/BurgerMenu/index';
-import { MobileDrawer } from '../UI/MobileDrawer';
-import { TaskType } from '../../constants/constant';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import { Modal } from '@components/UI/Modal';
+import { ColumnForm } from '@components/Forms/ColumnForm';
+import { BurgerMenu } from '@components/UI/BurgerMenu/index';
+import { MobileDrawer } from '@components/UI/MobileDrawer';
+import { TaskType } from '@myTypes/task';
+import { useReduxActions } from '@hooks/useReduxActions';
 
 interface ColumnData {
   id: string;
@@ -25,13 +25,22 @@ interface ColumnData {
 
 export const DashBoard: FC = () => {
   const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
-  const dispatch = useDispatch<AppDispatch>();
   const tasks = useSelector((state: RootState) => state.task);
   const columns = useSelector((state: RootState) => state.column);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isColumnFormOpen, setIsColumnFormOpen] = useState(false);
+
+  const {
+    createTask,
+    moveTask,
+    updateTask,
+    deleteTask,
+    deleteColumn,
+    updateColumn,
+    moveColumn,
+  } = useReduxActions();
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -41,13 +50,6 @@ export const DashBoard: FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleDropTask = (taskId: string, targetColumn: string) => {
-    dispatch({
-      type: 'MOVE_TASK',
-      payload: { id: taskId, column: targetColumn },
-    });
-  };
-
   const transformedTasks: TaskType[] = tasks.map((task) => ({
     id: task.id,
     title: task.title || 'Untitled',
@@ -55,71 +57,6 @@ export const DashBoard: FC = () => {
     priority: task.priority || 'medium',
     column: task.column,
   }));
-
-  const handleTaskDelete = (id: string) => {
-    dispatch({
-      type: 'DELETE_TASK',
-      payload: { id },
-    });
-  };
-
-  const handleUpdateTask = (
-    id: string,
-    updatedTask: { title: string; description?: string; priority: string }
-  ) => {
-    const taskPayload: ITaskPayload = {
-      id,
-      title: updatedTask.title,
-      description: updatedTask.description,
-      priority: updatedTask.priority,
-    };
-    dispatch({
-      type: 'UPDATE_TASK',
-      payload: taskPayload,
-    });
-  };
-
-  const handleCreateTask = (newTask: TaskType, targetColumn: string) => {
-    const taskPayload: ITaskPayload = {
-      id: newTask.id,
-      title: newTask.title,
-      description: newTask.description,
-      priority: newTask.priority,
-      column: targetColumn,
-    };
-
-    dispatch({
-      type: 'CREATE_TASK',
-      payload: taskPayload,
-    });
-  };
-
-  const handleColumnDrop = (
-    draggedColumnId: string,
-    targetColumnId: string
-  ) => {
-    dispatch({
-      type: 'MOVE_COLUMN',
-      payload: { draggedColumnId, targetColumnId },
-    });
-  };
-
-  const handleUpdateColumn = (
-    id: string,
-    updateColumn: { title: string; color: string }
-  ) => {
-    dispatch({
-      type: 'UPDATE_COLUMN',
-      payload: { id, ...updateColumn },
-    });
-  };
-
-  const handleDeleteColumn = (id: string) => {
-    dispatch({
-      type: 'DELETE_COLUMN',
-      payload: { id },
-    });
-  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -173,15 +110,15 @@ export const DashBoard: FC = () => {
             tasks={transformedTasks.filter(
               (task) => task.column === column.title
             )}
-            onDropTask={handleDropTask}
-            onCreateTask={handleCreateTask}
+            onDropTask={moveTask}
+            onCreateTask={createTask}
             onTaskDragStart={setDraggingTaskId}
             draggingTaskId={draggingTaskId}
-            onTaskDelete={handleTaskDelete}
-            onTaskUpdate={handleUpdateTask}
-            onColumnDrop={handleColumnDrop}
-            onColumnUpdate={handleUpdateColumn}
-            onColumnDelete={handleDeleteColumn}
+            onTaskDelete={deleteTask}
+            onTaskUpdate={updateTask}
+            onColumnDrop={moveColumn}
+            onColumnUpdate={updateColumn}
+            onColumnDelete={deleteColumn}
           />
         ))}
       </BoardContainer>

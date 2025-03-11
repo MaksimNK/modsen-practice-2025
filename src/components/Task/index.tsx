@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import {
   TaskTitle,
   TaskDescription,
@@ -6,9 +6,9 @@ import {
   TaskItemStyled,
   MoreButtonStyled,
 } from './styled';
-import { MoreIcon } from '../UI/MoreIcon';
-import { EditMenu } from '../EditMenu/index';
-import { TaskEditForm } from '../TaskEditForm';
+import { MoreIcon } from '@components/UI/MoreIcon';
+import { EditMenu } from '@components/UI/EditMenu/index';
+import { TaskEditForm } from '@components/Forms/TaskEditForm';
 
 interface ITaskProps {
   id: string;
