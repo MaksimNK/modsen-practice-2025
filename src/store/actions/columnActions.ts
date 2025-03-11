@@ -1,24 +1,29 @@
 import { Action } from 'redux';
+import {
+  CREATE_COLUMN,
+  UPDATE_COLUMN,
+  DELETE_COLUMN,
+  MOVE_COLUMN,
+} from '@myTypes/actionTypes';
 
 export interface IColumnPayload {
   id: string;
   title: string;
   color: string;
 }
-
-export interface CreateColumnAction extends Action<'CREATE_COLUMN'> {
+export interface CreateColumnAction extends Action<typeof CREATE_COLUMN> {
   payload: IColumnPayload;
 }
 
-export interface UpdateColumnAction extends Action<'UPDATE_COLUMN'> {
+export interface UpdateColumnAction extends Action<typeof UPDATE_COLUMN> {
   payload: IColumnPayload;
 }
 
-export interface DeleteColumnAction extends Action<'DELETE_COLUMN'> {
+export interface DeleteColumnAction extends Action<typeof DELETE_COLUMN> {
   payload: { id: string };
 }
 
-export interface MoveColumnAction extends Action<'MOVE_COLUMN'> {
+export interface MoveColumnAction extends Action<typeof MOVE_COLUMN> {
   payload: { draggedColumnId: string; targetColumnId: string };
 }
 

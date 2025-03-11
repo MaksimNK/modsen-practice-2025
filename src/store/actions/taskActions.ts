@@ -1,33 +1,63 @@
-export interface ITaskPayload {
-  id: string;
-  title: string;
-  description?: string;
-  priority?: string;
-  column?: string;
-}
+import { TaskActionType, ITaskPayload } from '@myTypes/task';
+import {
+  CREATE_TASK,
+  DELETE_TASK,
+  MOVE_TASK,
+  UPDATE_TASK,
+  MOVE_TASK_ERROR,
+} from '@myTypes/actionTypes';
 
-interface CreateTaskAction {
-  type: 'CREATE_TASK';
-  payload: ITaskPayload;
-}
+const ERROR_MESSAGES = {
+  MISSING_ID: 'Task ID is required for moving a task.',
+  MISSING_COLUMN: 'Column is required for moving a task.',
+  MISSING_ORDER: 'Order is required for moving a task.',
+};
 
-interface DeleteTaskAction {
-  type: 'DELETE_TASK';
-  payload: { id: string };
-}
+export const createTask = (
+  task: ITaskPayload,
+  targetColumn: string
+): TaskActionType => ({
+  type: CREATE_TASK,
+  payload: { ...task, column: targetColumn },
+});
 
-interface UpdateTaskAction {
-  type: 'UPDATE_TASK';
-  payload: ITaskPayload;
-}
+export const moveTask = ({
+  id,
+  column,
+  newIndex,
+}: ITaskPayload): TaskActionType => {
+  if (!id) {
+    return {
+      type: MOVE_TASK_ERROR,
+      payload: ERROR_MESSAGES.MISSING_ID,
+    };
+  }
 
-interface MoveTaskAction {
-  type: 'MOVE_TASK';
-  payload: { id: string; column: string };
-}
+  if (!column) {
+    return {
+      type: MOVE_TASK_ERROR,
+      payload: ERROR_MESSAGES.MISSING_COLUMN,
+    };
+  }
 
-export type TaskActionType =
-  | CreateTaskAction
-  | DeleteTaskAction
-  | UpdateTaskAction
-  | MoveTaskAction;
+  if (!newIndex) {
+    return {
+      type: MOVE_TASK_ERROR,
+      payload: ERROR_MESSAGES.MISSING_ORDER,
+    };
+  }
+
+  return {
+    type: MOVE_TASK,
+    payload: { id, column, newIndex },
+  };
+};
+
+export const updateTask = (task: ITaskPayload): TaskActionType => ({
+  type: UPDATE_TASK,
+  payload: task,
+});
+export const deleteTask = (task: ITaskPayload): TaskActionType => ({
+  type: DELETE_TASK,
+  payload: task,
+});

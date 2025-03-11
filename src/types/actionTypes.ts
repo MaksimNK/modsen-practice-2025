@@ -1,0 +1,9 @@
+export const MOVE_TASK = 'MOVE_TASK';
+export const DELETE_TASK = 'DELETE_TASK';
+export const UPDATE_TASK = 'UPDATE_TASK';
+export const CREATE_TASK = 'CREATE_TASK';
+export const MOVE_COLUMN = 'MOVE_COLUMN';
+export const UPDATE_COLUMN = 'UPDATE_COLUMN';
+export const DELETE_COLUMN = 'DELETE_COLUMN';
+export const MOVE_TASK_ERROR = 'MOVE_TASK_ERROR';
+export const CREATE_COLUMN = 'CREATE_COLUMN';

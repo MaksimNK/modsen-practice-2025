@@ -1,27 +1,29 @@
-import { IColumnPayload, ColumnActionType } from '../actions/columnActions';
-
-const initialColumns: IColumnPayload[] = [
-  { id: '1', title: 'To Do', color: '#4F46E5' },
-  { id: '2', title: 'In Progress', color: '#F59E0B' },
-  { id: '3', title: 'Done', color: '#22C55E' },
-];
+import {
+  CREATE_COLUMN,
+  UPDATE_COLUMN,
+  DELETE_COLUMN,
+  MOVE_COLUMN,
+} from '@myTypes/actionTypes';
+import { initialColumns } from '@store/initialState/initialColumns';
+import { IColumnPayload } from '@myTypes/column';
+import { ColumnActionType } from '@store/actions/columnActions';
 
 const columnReducer = (
   state: IColumnPayload[] = initialColumns,
   action: ColumnActionType
 ): IColumnPayload[] => {
   switch (action.type) {
-    case 'CREATE_COLUMN':
+    case CREATE_COLUMN:
       return [...state, action.payload];
-    case 'UPDATE_COLUMN':
+    case UPDATE_COLUMN:
       return state.map((col) =>
         col.id === action.payload.id
           ? { ...col, title: action.payload.title, color: action.payload.color }
           : col
       );
-    case 'DELETE_COLUMN':
+    case DELETE_COLUMN:
       return state.filter((col) => col.id !== action.payload.id);
-    case 'MOVE_COLUMN': {
+    case MOVE_COLUMN: {
       const { draggedColumnId, targetColumnId } = action.payload;
       const draggedIndex = state.findIndex((col) => col.id === draggedColumnId);
       const targetIndex = state.findIndex((col) => col.id === targetColumnId);
