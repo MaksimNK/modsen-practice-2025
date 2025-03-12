@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useRef, RefObject } from 'react';
 import { Column } from '@components/Column/index';
 import {
   BoardContainer,
@@ -16,7 +16,7 @@ import { BurgerMenu } from '@components/UI/BurgerMenu/index';
 import { MobileDrawer } from '@components/UI/MobileDrawer';
 import { TaskType } from '@myTypes/task';
 import { useReduxActions } from '@hooks/useReduxActions';
-
+import { useDragScroll } from '@hooks/useDragScroll';
 interface ColumnData {
   id: string;
   title: string;
@@ -31,6 +31,10 @@ export const DashBoard: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isColumnFormOpen, setIsColumnFormOpen] = useState(false);
+  const boardRef = useRef<HTMLDivElement>(null);
+
+  const { handleMouseDown, handleMouseLeaveOrUp, handleMouseMove } =
+    useDragScroll(boardRef as RefObject<HTMLDivElement>);
 
   const {
     createTask,
@@ -88,7 +92,13 @@ export const DashBoard: FC = () => {
       <MobileHeader>
         <BurgerMenu isOpen={isMenuOpen} onClick={toggleMenu} />
       </MobileHeader>
-      <BoardContainer>
+      <BoardContainer
+        ref={boardRef}
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseLeaveOrUp}
+        onMouseUp={handleMouseLeaveOrUp}
+        onMouseMove={handleMouseMove}
+      >
         <MobileDrawer isOpen={isMobileDrawerOpen} onClose={toggleMobileDrawer}>
           {isColumnFormOpen ? (
             <ColumnForm onClose={closeColumnForm} />
