@@ -111,6 +111,7 @@ export const DashBoard: FC = () => {
             </>
           )}
         </MobileDrawer>
+
         {columns.map((column: ColumnData) => (
           <Column
             key={column.id}
