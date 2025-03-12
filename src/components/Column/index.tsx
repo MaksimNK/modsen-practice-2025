@@ -130,7 +130,7 @@ export const Column: FC<ColumnProps> = ({
   return (
     <ColumnContainer
       draggable
-      className="column-container"
+      className="column-container drag-handle"
       data-column={title}
       ref={columnRef}
       onDragStart={handleColumnDragStart}

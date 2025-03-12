@@ -4,16 +4,15 @@ export const useDragScroll = (scrollRef: RefObject<HTMLDivElement>) => {
   const isDown = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
-  let tempX;
-  let tempScroll;
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.target instanceof HTMLElement && e.target.closest('.drag-handle')) {
+      return;
+    }
     if (!scrollRef.current) return;
     isDown.current = true;
-    tempX = e.pageX;
-    startX.current = tempX - scrollRef.current.offsetLeft;
-    tempScroll = scrollRef.current.scrollLeft;
-    scrollLeft.current = tempScroll;
+    startX.current = e.pageX - scrollRef.current.offsetLeft;
+    scrollLeft.current = scrollRef.current.scrollLeft;
   };
 
   const handleMouseLeaveOrUp = () => {
