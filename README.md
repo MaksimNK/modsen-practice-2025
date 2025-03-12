@@ -1,4 +1,4 @@
-deploy: https://67d157d7d7a96d4b19011fc5--startling-blancmange-3b75ea.netlify.app/
+deploy: https://67d15c260df6db0073c929f0--startling-blancmange-3b75ea.netlify.app/
 
 
 
